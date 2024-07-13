@@ -13,6 +13,8 @@ String phoneRegExp =
     r'\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*';
 String emailRegExp =
     r"([a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+)";
+String durationRegExp =
+    r'(?:(\d{1,2}):)?(\d{1,2}):(\d{2})';
 
 /// construct regexp. pattern from provided link types
 RegExp constructRegExpFromLinkType(List<LinkType> types) {
@@ -49,6 +51,11 @@ RegExp constructRegExpFromLinkType(List<LinkType> types) {
             ? buffer.write("($phoneRegExp)")
             : buffer.write("($phoneRegExp)|");
         break;
+      case LinkType.duration:
+        isLast
+            ? buffer.write("($durationRegExp)")
+            : buffer.write("($durationRegExp)|");
+        break;
       default:
     }
   }
@@ -67,6 +74,8 @@ LinkType getMatchedType(String match) {
     type = LinkType.userTag;
   }  else if (RegExp(hashtagRegExp).hasMatch(match)) {
     type = LinkType.hashTag;
+  } else if (RegExp(durationRegExp).hasMatch(match)) {
+    type = LinkType.duration;
   }
   return type;
 }
